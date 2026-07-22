@@ -83,6 +83,23 @@ body {
   background: rgb(139 125 255 / 0.35);
 }
 
+/* Barra de scroll discreta para los paneles que se desplazan en horizontal:
+   la de Windows a tamano completo pesa mas que el propio contenido. */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(139 125 255 / 0.28) transparent;
+}
+.scroll-thin::-webkit-scrollbar {
+  height: 6px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: rgb(139 125 255 / 0.28);
+  border-radius: 3px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 h1,
 h2,
 h3 {

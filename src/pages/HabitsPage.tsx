@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { useCreateHabit, useHabits } from '@/api/habits'
 import { useSession } from '@/auth/session'
 import { HabitCard } from '@/components/HabitCard'
+import { SkyYearMap } from '@/components/SkyYearMap'
 import { Button, Card, Field } from '@/components/ui'
 
 // "lunes, 21 de julio" — el dia del usuario, que corta a SU medianoche. Sin el
@@ -150,6 +151,9 @@ export function HabitsPage() {
         {habits?.map((habit, i) => (
           <HabitCard key={habit.id} habit={habit} index={i + 1} />
         ))}
+
+        {/* La reflexion cierra la pagina: primero la accion de hoy, despues el ano. */}
+        {habits && habits.length > 0 && <SkyYearMap />}
       </main>
     </>
   )

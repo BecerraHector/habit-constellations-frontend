@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { Habit, HabitHistory } from '@/api/types'
+import type { Habit, HabitHistory, Sky } from '@/api/types'
 import { apiFetch } from '@/lib/http'
 
 const KEY = ['habits'] as const
@@ -23,6 +23,14 @@ export function useHabitHistory(id: string, from: string, to: string) {
   return useQuery({
     queryKey: [...KEY, id, 'logs', from, to],
     queryFn: () => apiFetch<HabitHistory>(`/api/v1/habits/${id}/logs?from=${from}&to=${to}`),
+  })
+}
+
+/** El mapa del cielo: todos los habitos condensados en un nivel de brillo por dia. */
+export function useSky(from: string, to: string) {
+  return useQuery({
+    queryKey: [...KEY, 'sky', from, to],
+    queryFn: () => apiFetch<Sky>(`/api/v1/habits/sky?from=${from}&to=${to}`),
   })
 }
 

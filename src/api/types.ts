@@ -43,6 +43,20 @@ export interface HabitHistory {
   dates: string[]
 }
 
+/** Un dia del mapa personal; misma escala 0..4 que el mapa de una galaxia. */
+export interface SkyDay {
+  date: string
+  activeHabits: number
+  completions: number
+  level: number
+}
+
+export interface Sky {
+  from: string
+  to: string
+  days: SkyDay[]
+}
+
 export interface Galaxy {
   id: string
   name: string
