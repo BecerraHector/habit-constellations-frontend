@@ -92,6 +92,31 @@ export interface ThemeCount {
   members: number
 }
 
+export interface InviteCode {
+  inviteCode: string
+}
+
+export interface FriendRequest {
+  requestId: string
+  userId: string
+  displayName: string
+  direction: 'INCOMING' | 'OUTGOING'
+  createdAt: string
+}
+
+/** Resumen agregado de un amigo: nunca nombres de habitos ni email. */
+export interface Friend {
+  userId: string
+  displayName: string
+  friendsSince: string
+  activeHabits: number
+  bestCurrentStreak: number
+  longestStreakEver: number
+  totalStars: number
+  totalConstellations: number
+  completedToday: number
+}
+
 export interface PageResponse<T> {
   content: T[]
   page: number

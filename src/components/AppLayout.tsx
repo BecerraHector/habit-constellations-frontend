@@ -6,6 +6,7 @@ import { Button } from '@/components/ui'
 const LINKS = [
   { to: '/', label: 'Tu cielo' },
   { to: '/galaxias', label: 'Galaxias' },
+  { to: '/amigos', label: 'Amigos' },
 ]
 
 /** Marco comun de las vistas privadas: cielo de fondo, navegacion y salir. */

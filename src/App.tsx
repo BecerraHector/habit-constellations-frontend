@@ -6,6 +6,7 @@ import { RegisterPage } from '@/pages/RegisterPage'
 import { HabitsPage } from '@/pages/HabitsPage'
 import { GalaxiesPage } from '@/pages/GalaxiesPage'
 import { GalaxyDetailPage } from '@/pages/GalaxyDetailPage'
+import { FriendsPage } from '@/pages/FriendsPage'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/" element={<HabitsPage />} />
           <Route path="/galaxias" element={<GalaxiesPage />} />
           <Route path="/galaxias/:id" element={<GalaxyDetailPage />} />
+          <Route path="/amigos" element={<FriendsPage />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
