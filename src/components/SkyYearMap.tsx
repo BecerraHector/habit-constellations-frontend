@@ -103,9 +103,9 @@ export function SkyYearMap() {
 
       <div className="mt-4 flex gap-2">
         {/* Etiquetas de fila fuera del scroll: siguen visibles con el presente a la vista. */}
-        <div className="flex shrink-0 flex-col gap-[3px] pt-[19px]" aria-hidden>
+        <div className="flex shrink-0 flex-col gap-[6px] pt-[26px]" aria-hidden>
           {WEEKDAYS.map((d, i) => (
-            <span key={i} className="flex h-[11px] items-center text-[9px] leading-none text-faint">
+            <span key={i} className="flex h-[22px] items-center text-[11px] leading-none text-faint">
               {d}
             </span>
           ))}
@@ -117,27 +117,27 @@ export function SkyYearMap() {
           role="img"
           aria-label={`Mapa del ultimo ano: ${totalStars} estrellas y ${plenos} dias plenos`}
         >
-          <div className="flex gap-[3px]">
+          <div className="flex gap-[6px]">
             {weeks.map((week, w) => {
               const month = week.monday.getMonth()
               const newMonth = w === 0 || month !== weeks[w - 1].monday.getMonth()
               return (
-                <div key={iso(week.monday)} className="flex flex-col gap-[3px]">
-                  <span className="h-4 overflow-visible text-[9px] leading-4 whitespace-nowrap text-faint">
+                <div key={iso(week.monday)} className="flex flex-col gap-[6px]">
+                  <span className="h-5 overflow-visible text-[11px] leading-5 whitespace-nowrap text-faint">
                     {newMonth ? MONTHS[month] : ''}
                   </span>
                   {week.dates.map((date) => {
                     const day = byDate.get(date)
                     if (!day) {
                       // Fuera de la ventana (bordes de la primera y ultima semana).
-                      return <span key={date} className="h-[11px] w-[11px]" />
+                      return <span key={date} className="h-[22px] w-[22px]" />
                     }
                     const empty = day.activeHabits === 0
                     return (
                       <span
                         key={date}
                         title={tooltipOf(day)}
-                        className={`h-[11px] w-[11px] rounded-full ${
+                        className={`h-[22px] w-[22px] rounded-full ${
                           day.level === 4 && !empty ? 'twinkle' : ''
                         }`}
                         style={{ background: empty ? VOID : LUM[day.level] }}
@@ -151,12 +151,12 @@ export function SkyYearMap() {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-1.5 border-t border-border pt-3 text-[10px] text-faint">
-        <span className="h-[9px] w-[9px] rounded-full" style={{ background: VOID }} title="aun sin habitos" />
-        <span className="mr-1">vacio</span>
+      <div className="mt-4 flex items-center justify-end gap-2 border-t border-border pt-3.5 text-xs text-faint">
+        <span className="h-[12px] w-[12px] rounded-full" style={{ background: VOID }} title="aun sin habitos" />
+        <span className="mr-1.5">vacio</span>
         <span>apagado</span>
         {LUM.map((c, i) => (
-          <span key={i} className="h-[9px] w-[9px] rounded-full" style={{ background: c }} />
+          <span key={i} className="h-[12px] w-[12px] rounded-full" style={{ background: c }} />
         ))}
         <span>pleno</span>
       </div>
