@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import type { Habit } from '@/api/types'
 import { useArchiveHabit, useToggleCompletion } from '@/api/habits'
 import { Button, Card, ConfirmButton } from '@/components/ui'
@@ -10,8 +11,19 @@ const BAND_H = 48
  * suave; los cumplidos brillan en oro y quedan conectados por un trazo, como una
  * constelacion dibujandose. La forma es deterministica (depende solo del indice)
  * para que no cambie entre renders.
+ *
+ * `celebrate` enciende la ceremonia: la estrella recien ganada estalla con dos
+ * ondas. Solo se activa cuando el usuario acaba de marcar, no al cargar la lista.
  */
-function ConstellationBand({ filled, pending }: { filled: number; pending: number }) {
+function ConstellationBand({
+  filled,
+  pending,
+  celebrate = false,
+}: {
+  filled: number
+  pending: number
+  celebrate?: boolean
+}) {
   const total = filled + pending
   if (total === 0) return null
 
@@ -27,6 +39,8 @@ function ConstellationBand({ filled, pending }: { filled: number; pending: numbe
     .map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
     .join(' ')
 
+  const newest = filled > 0 ? pts[filled - 1] : null
+
   return (
     <svg
       viewBox={`0 0 ${BAND_W} ${BAND_H}`}
@@ -36,11 +50,33 @@ function ConstellationBand({ filled, pending }: { filled: number; pending: numbe
       {filled > 1 && (
         <path d={litPath} fill="none" stroke="var(--color-gold)" strokeOpacity="0.35" strokeWidth="1" />
       )}
+      {celebrate && newest && (
+        <>
+          <circle
+            cx={newest.x}
+            cy={newest.y}
+            r="7"
+            fill="none"
+            stroke="var(--color-gold)"
+            strokeWidth="1"
+            className="burst"
+          />
+          <circle
+            cx={newest.x}
+            cy={newest.y}
+            r="7"
+            fill="none"
+            stroke="var(--color-gold-soft)"
+            strokeWidth="0.6"
+            className="burst burst-late"
+          />
+        </>
+      )}
       {pts.map((p, i) => {
         const lit = i < filled
         const last = i === filled - 1
         return (
-          <g key={i} className={lit && last ? 'ignite' : undefined}>
+          <g key={i} className={lit && last && celebrate ? 'ignite' : undefined}>
             {lit && <circle cx={p.x} cy={p.y} r="5.5" fill="var(--color-gold)" fillOpacity="0.18" />}
             <circle
               cx={p.x}
@@ -62,6 +98,29 @@ export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }
   const { progress } = habit
   const done = progress.completedToday
   const streakAlive = progress.currentStreak > 0
+
+  // La ceremonia dura un instante tras marcar; el temporizador la apaga solo.
+  const [justLit, setJustLit] = useState(false)
+  const litTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (litTimer.current) clearTimeout(litTimer.current)
+  }, [])
+
+  function onToggle() {
+    const marking = !done
+    toggle.mutate(
+      { id: habit.id, done: marking },
+      {
+        onSuccess: () => {
+          if (!marking) return
+          setJustLit(true)
+          if (litTimer.current) clearTimeout(litTimer.current)
+          litTimer.current = setTimeout(() => setJustLit(false), 1400)
+        },
+      },
+    )
+  }
 
   return (
     <Card
@@ -88,7 +147,7 @@ export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }
           <div
             className={`font-display text-3xl leading-none font-semibold tabular-nums ${
               streakAlive ? 'text-gold-soft [text-shadow:0_0_24px_rgb(255_212_121/0.45)]' : 'text-faint'
-            }`}
+            } ${justLit ? 'pop' : ''}`}
           >
             {progress.currentStreak}
           </div>
@@ -102,6 +161,7 @@ export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }
         <ConstellationBand
           filled={progress.starsInCurrentCycle}
           pending={progress.daysToNextConstellation}
+          celebrate={justLit}
         />
         <div className="ml-auto flex items-center gap-2">
           <ConfirmButton
@@ -113,7 +173,7 @@ export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }
           </ConfirmButton>
           <Button
             variant={done ? 'ghost' : 'primary'}
-            onClick={() => toggle.mutate({ id: habit.id, done: !done })}
+            onClick={onToggle}
             busy={toggle.isPending}
             className={done ? 'border-gold/30 text-gold-soft hover:border-gold/50 hover:text-gold-soft' : ''}
           >
