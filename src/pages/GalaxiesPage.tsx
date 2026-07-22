@@ -60,21 +60,36 @@ function GalaxyCard({ galaxy, index }: { galaxy: Galaxy; index: number }) {
   const [joining, setJoining] = useState(false)
   const [habitId, setHabitId] = useState('')
 
+  // Una galaxia sin habitantes es una reliquia: sigue ahi, a oscuras, y quien la
+  // descubra puede revivirla heredando su historia. El pasado nunca se borra.
+  const relic = !galaxy.member && galaxy.activeMembers === 0
+
   const inner = (
     <>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="truncate text-lg font-semibold text-ink">{galaxy.name}</h3>
+          <h3 className={`truncate text-lg font-semibold ${relic ? 'text-muted' : 'text-ink'}`}>
+            {galaxy.name}
+          </h3>
           {galaxy.description && (
             <p className="mt-0.5 line-clamp-2 text-sm text-muted">{galaxy.description}</p>
           )}
         </div>
-        <span className="shrink-0 rounded-full border border-border bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted">
-          {galaxy.theme}
+        <span className="flex shrink-0 items-center gap-1.5">
+          {relic && (
+            <span className="rounded-full border border-border bg-white/[0.02] px-2.5 py-0.5 text-xs text-faint">
+              a oscuras
+            </span>
+          )}
+          <span className="rounded-full border border-border bg-white/[0.04] px-2.5 py-0.5 text-xs text-muted">
+            {galaxy.theme}
+          </span>
         </span>
       </div>
       <p className="mt-3 text-xs text-faint">
-        {galaxy.activeMembers} {galaxy.activeMembers === 1 ? 'habitante' : 'habitantes'}
+        {relic
+          ? 'Nadie la habita ya. Unete y vuelve a encenderla: su historia sigue aqui.'
+          : `${galaxy.activeMembers} ${galaxy.activeMembers === 1 ? 'habitante' : 'habitantes'}`}
         {galaxy.member && galaxy.joinedOn && (
           <span className="text-gold-soft"> · dentro desde el {shortDate(galaxy.joinedOn)}</span>
         )}

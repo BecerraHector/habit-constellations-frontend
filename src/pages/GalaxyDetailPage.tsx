@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import type { GalaxyDay } from '@/api/types'
 import { useGalaxyDay, useGalaxyDetail, useGalaxyMembers, useLeaveGalaxy } from '@/api/galaxies'
 import { Card, ConfirmButton } from '@/components/ui'
@@ -50,8 +50,16 @@ function DayStar({ day, selected, onSelect }: { day: GalaxyDay; selected: boolea
 }
 
 /** El desglose lista quienes cumplieron, nunca los ausentes. */
-function DayBreakdown({ galaxyId, date }: { galaxyId: string; date: string }) {
-  const { data, isLoading } = useGalaxyDay(galaxyId, date)
+function DayBreakdown({
+  galaxyId,
+  date,
+  friendsOnly,
+}: {
+  galaxyId: string
+  date: string
+  friendsOnly: boolean
+}) {
+  const { data, isLoading } = useGalaxyDay(galaxyId, date, friendsOnly)
 
   if (isLoading) return <p className="animate-pulse py-2 text-sm text-muted">Mirando ese dia…</p>
   if (!data) return null
@@ -96,7 +104,11 @@ function Stat({ value, label }: { value: string; label: string }) {
 export function GalaxyDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const detail = useGalaxyDetail(id!)
+  // El alcance vive en la URL: un enlace con ?circulo=1 llega ya filtrado.
+  const [params, setParams] = useSearchParams()
+  const friendsOnly = params.get('circulo') === '1'
+  const setFriendsOnly = (on: boolean) => setParams(on ? { circulo: '1' } : {}, { replace: true })
+  const detail = useGalaxyDetail(id!, friendsOnly)
   const members = useGalaxyMembers(id!)
   const leave = useLeaveGalaxy()
   const [selected, setSelected] = useState<string | null>(null)
@@ -148,11 +160,34 @@ export function GalaxyDetailPage() {
 
       <main className="mx-auto max-w-2xl space-y-4 px-4 pb-20">
         <Card className="rise p-5 sm:p-6">
-          <div className="flex items-baseline justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xs font-medium tracking-[0.14em] text-faint uppercase">
               Mapa de brillo ·{' '}
               {map.days.length === 1 ? 'primer dia' : `ultimos ${map.days.length} dias`}
             </h2>
+            {/* En galaxias concurridas el brillo global es estadistica; el circulo
+                propio lo devuelve a escala humana. */}
+            <div className="flex rounded-full border border-border bg-white/[0.03] p-0.5 text-xs">
+              {(
+                [
+                  [false, 'Todo el cielo'],
+                  [true, 'Mi circulo'],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={label}
+                  onClick={() => setFriendsOnly(value)}
+                  aria-pressed={friendsOnly === value}
+                  className={`rounded-full px-3 py-1 transition duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
+                    friendsOnly === value
+                      ? 'bg-primary/20 font-medium text-primary-strong'
+                      : 'text-muted hover:text-ink'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* El brillo es proporcional a cuanta gente cumplio; el pleno (nivel 4) parpadea. */}
@@ -173,7 +208,11 @@ export function GalaxyDetailPage() {
             <Stat value={`${Math.round(map.averageRatio * 100)}%`} label="brillo medio" />
           </div>
 
-          {selected && <div className="mt-4">{id && <DayBreakdown galaxyId={id} date={selected} />}</div>}
+          {selected && id && (
+            <div className="mt-4">
+              <DayBreakdown galaxyId={id} date={selected} friendsOnly={friendsOnly} />
+            </div>
+          )}
         </Card>
 
         <Card className="rise p-5 sm:p-6" style={{ animationDelay: '80ms' }}>

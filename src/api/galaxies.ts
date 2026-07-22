@@ -38,10 +38,12 @@ export function useDiscover(theme: string | null) {
   })
 }
 
-export function useGalaxyDetail(id: string) {
+/** `friendsOnly` acota el brillo al circulo propio: amigos que esten dentro, y tu. */
+export function useGalaxyDetail(id: string, friendsOnly = false) {
   return useQuery({
-    queryKey: [...KEY, id],
-    queryFn: () => apiFetch<GalaxyDetail>(`/api/v1/galaxies/${id}`),
+    queryKey: [...KEY, id, { friendsOnly }],
+    queryFn: () =>
+      apiFetch<GalaxyDetail>(`/api/v1/galaxies/${id}${friendsOnly ? '?friends=true' : ''}`),
   })
 }
 
@@ -52,11 +54,17 @@ export function useGalaxyMembers(id: string) {
   })
 }
 
-/** El desglose de un dia se pide al tocar su estrella; `date` nulo no consulta. */
-export function useGalaxyDay(id: string, date: string | null) {
+/**
+ * El desglose de un dia se pide al tocar su estrella; `date` nulo no consulta.
+ * Comparte el filtro de amigos con el mapa para que los nombres cuadren con la cifra.
+ */
+export function useGalaxyDay(id: string, date: string | null, friendsOnly = false) {
   return useQuery({
-    queryKey: [...KEY, id, 'day', date],
-    queryFn: () => apiFetch<GalaxyDayDetail>(`/api/v1/galaxies/${id}/days/${date}`),
+    queryKey: [...KEY, id, 'day', date, { friendsOnly }],
+    queryFn: () =>
+      apiFetch<GalaxyDayDetail>(
+        `/api/v1/galaxies/${id}/days/${date}${friendsOnly ? '?friends=true' : ''}`,
+      ),
     enabled: date !== null,
   })
 }
