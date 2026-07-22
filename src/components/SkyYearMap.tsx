@@ -32,6 +32,40 @@ function tooltipOf(day: SkyDay | undefined) {
   return `${longDate(day.date)}: ${day.completions} de ${day.activeHabits}${full ? ' — pleno ✦' : ''}`
 }
 
+/** Destello de cuatro puntas centrado en (11,11): los brazos curvan hacia el centro. */
+function sparklePath(r: number) {
+  const c = 11
+  return `M ${c} ${c - r} Q ${c} ${c} ${c + r} ${c} Q ${c} ${c} ${c} ${c + r} Q ${c} ${c} ${c - r} ${c} Q ${c} ${c} ${c} ${c - r} Z`
+}
+
+// La forma se gana: el vacio y lo apagado son puntos; la estrella solo aparece
+// donde se cumplio, y crece con el nivel hasta el pleno.
+const SPARKLE_R = [0, 6.5, 8.5, 10, 11]
+
+function DayStar({ day }: { day: SkyDay }) {
+  const empty = day.activeHabits === 0
+
+  if (empty || day.level === 0) {
+    return (
+      <svg viewBox="0 0 22 22" className="h-[22px] w-[22px]" aria-hidden>
+        <circle cx="11" cy="11" r="5" fill={empty ? VOID : LUM[0]} />
+      </svg>
+    )
+  }
+
+  const r = SPARKLE_R[day.level]
+  return (
+    <svg
+      viewBox="0 0 22 22"
+      className={`h-[22px] w-[22px] ${day.level === 4 ? 'twinkle' : ''}`}
+      aria-hidden
+    >
+      {day.level >= 3 && <circle cx="11" cy="11" r={r * 0.8} fill={LUM[day.level]} opacity="0.25" />}
+      <path d={sparklePath(r)} fill={LUM[day.level]} />
+    </svg>
+  )
+}
+
 /**
  * Tu cielo, noche a noche: un punto por dia, todos los habitos condensados en un
  * nivel de brillo. Misma rampa --lum que el mapa de una galaxia — el usuario ya
@@ -131,16 +165,10 @@ export function SkyYearMap() {
                       // Fuera de la ventana (bordes de la primera y ultima semana).
                       return <span key={date} className="h-[22px] w-[22px]" />
                     }
-                    const empty = day.activeHabits === 0
                     return (
-                      <span
-                        key={date}
-                        title={tooltipOf(day)}
-                        className={`h-[22px] w-[22px] rounded-full ${
-                          day.level === 4 && !empty ? 'twinkle' : ''
-                        }`}
-                        style={{ background: empty ? VOID : LUM[day.level] }}
-                      />
+                      <span key={date} title={tooltipOf(day)} className="h-[22px] w-[22px]">
+                        <DayStar day={day} />
+                      </span>
                     )
                   })}
                 </div>
@@ -153,9 +181,12 @@ export function SkyYearMap() {
       <div className="mt-4 flex items-center justify-end gap-2 border-t border-border pt-3.5 text-xs text-faint">
         <span className="h-[12px] w-[12px] rounded-full" style={{ background: VOID }} title="aun sin habitos" />
         <span className="mr-1.5">vacio</span>
+        <span className="h-[12px] w-[12px] rounded-full" style={{ background: LUM[0] }} />
         <span>apagado</span>
-        {LUM.map((c, i) => (
-          <span key={i} className="h-[12px] w-[12px] rounded-full" style={{ background: c }} />
+        {[1, 2, 3, 4].map((level) => (
+          <svg key={level} viewBox="0 0 22 22" className="h-[16px] w-[16px]">
+            <path d={sparklePath(SPARKLE_R[level])} fill={LUM[level]} />
+          </svg>
         ))}
         <span>pleno</span>
       </div>
