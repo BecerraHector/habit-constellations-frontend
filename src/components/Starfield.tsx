@@ -60,6 +60,10 @@ export function Starfield({ count = 140 }: { count?: number }) {
       canvas.style.width = `${window.innerWidth}px`
       canvas.style.height = `${window.innerHeight}px`
       ctx?.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // Cambiar el tamano del canvas borra su contenido. Con animacion el siguiente
+      // frame lo repinta solo; en modo reducido hay que volver a pintar aqui, o el
+      // cielo se queda negro tras el primer resize.
+      if (reduced) draw(performance.now())
     }
 
     function draw(now: number) {

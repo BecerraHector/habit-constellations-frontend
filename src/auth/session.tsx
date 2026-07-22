@@ -11,6 +11,8 @@ interface Session {
   signIn: (email: string, password: string) => Promise<void>
   signUp: (input: RegisterInput) => Promise<void>
   signOut: () => Promise<void>
+  /** Cierra solo el estado local; para cuando los tokens ya se revocaron por otra via. */
+  endSession: () => void
 }
 
 const SessionContext = createContext<Session | null>(null)
@@ -49,8 +51,15 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setStatus('anonymous')
   }
 
+  function endSession() {
+    setUser(null)
+    setStatus('anonymous')
+  }
+
   return (
-    <SessionContext value={{ status, user, signIn, signUp, signOut }}>{children}</SessionContext>
+    <SessionContext value={{ status, user, signIn, signUp, signOut, endSession }}>
+      {children}
+    </SessionContext>
   )
 }
 

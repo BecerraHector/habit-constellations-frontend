@@ -1,5 +1,5 @@
 import type { TokenResponse, UserResponse } from '@/api/types'
-import { apiFetch } from '@/lib/http'
+import { ApiError, apiFetch } from '@/lib/http'
 import { clearSession, getRefreshToken, setSession } from '@/lib/tokens'
 
 export interface RegisterInput {
@@ -28,8 +28,21 @@ export async function register(input: RegisterInput): Promise<UserResponse> {
   })
 }
 
+// Un unico restore en vuelo. Sin esto, el doble montaje de StrictMode dispara dos
+// refrescos con el mismo token: el segundo llega ya rotado y el backend lo trata
+// como reutilizacion robada, cerrando todas las sesiones del usuario.
+let restoring: Promise<UserResponse | null> | null = null
+
 /** Recupera la sesion tras recargar, usando el refresh guardado. null si no hay o caduco. */
-export async function restore(): Promise<UserResponse | null> {
+export function restore(): Promise<UserResponse | null> {
+  if (restoring) return restoring
+  restoring = doRestore().finally(() => {
+    restoring = null
+  })
+  return restoring
+}
+
+async function doRestore(): Promise<UserResponse | null> {
   const refreshToken = getRefreshToken()
   if (!refreshToken) return null
   try {
@@ -40,10 +53,26 @@ export async function restore(): Promise<UserResponse | null> {
     })
     setSession(tokens)
     return tokens.user
-  } catch {
-    clearSession()
+  } catch (err) {
+    // Solo un rechazo del backend invalida la sesion; un fallo de red no la borra.
+    if (err instanceof ApiError) clearSession()
     return null
   }
+}
+
+/** Revoca todas las sesiones del usuario, esta incluida. */
+export async function logoutEverywhere(): Promise<void> {
+  await apiFetch<void>('/api/v1/auth/logout-all', { method: 'POST' })
+  clearSession()
+}
+
+/**
+ * Da de baja la cuenta. Exige la contrasena: un token robado no basta.
+ * Lanza ApiError si no coincide; si va bien, la sesion local queda cerrada.
+ */
+export async function deleteAccount(password: string): Promise<void> {
+  await apiFetch<void>('/api/v1/auth/me', { method: 'DELETE', body: { password } })
+  clearSession()
 }
 
 export async function logout(): Promise<void> {

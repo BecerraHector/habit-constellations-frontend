@@ -7,6 +7,7 @@ const LINKS = [
   { to: '/', label: 'Tu cielo' },
   { to: '/galaxias', label: 'Galaxias' },
   { to: '/amigos', label: 'Amigos' },
+  { to: '/ajustes', label: 'Ajustes' },
 ]
 
 /** Marco comun de las vistas privadas: cielo de fondo, navegacion y salir. */
