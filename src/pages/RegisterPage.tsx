@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSession } from '@/auth/session'
 import { ApiError } from '@/lib/http'
-import { Button, Card, ErrorText, Field } from '@/components/ui'
+import { Button, Card, ErrorText, Field, Wordmark } from '@/components/ui'
 import { Starfield } from '@/components/Starfield'
 
 // La zona horaria del navegador es un buen valor por defecto: el dia corta a
@@ -35,16 +35,17 @@ export function RegisterPage() {
   return (
     <div className="grid min-h-screen place-items-center px-4 py-8">
       <Starfield />
-      <Card className="w-full max-w-sm p-8">
-        <h1 className="text-center text-2xl font-semibold">Crear cuenta</h1>
-        <p className="mt-1 text-center text-sm text-muted">Tu primera estrella empieza aqui.</p>
+      <Card glow className="rise w-full max-w-sm p-8">
+        <Wordmark className="text-center text-[22px] leading-snug" />
+        <p className="mt-2 text-center text-sm text-muted">Tu primera estrella empieza aqui.</p>
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-4">
+        <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <Field
             label="Nombre visible"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             maxLength={60}
+            placeholder="Como te veran tus amigos"
             required
           />
           <Field
@@ -53,26 +54,32 @@ export function RegisterPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            placeholder="tu@correo.com"
             required
           />
           <Field
-            label="Contrasena (minimo 10 caracteres)"
+            label="Contrasena"
+            hint="minimo 10 caracteres"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
+            placeholder="••••••••••"
             minLength={10}
             required
           />
           <ErrorText>{error}</ErrorText>
-          <Button type="submit" className="w-full" disabled={busy}>
-            {busy ? 'Creando...' : 'Crear cuenta'}
+          <Button type="submit" className="w-full py-3" busy={busy}>
+            Crear cuenta
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-muted">
+        <p className="mt-7 text-center text-sm text-muted">
           Ya tienes cuenta?{' '}
-          <Link to="/entrar" className="text-primary-strong hover:underline">
+          <Link
+            to="/entrar"
+            className="rounded font-medium text-primary-strong outline-none hover:underline focus-visible:ring-2 focus-visible:ring-primary/70"
+          >
             Entrar
           </Link>
         </p>

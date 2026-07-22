@@ -1,25 +1,38 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/unbounded';
+@import '@fontsource-variable/onest';
 
 /*
- * Tema cosmico. Los tokens viven aqui como variables para que un cambio de paleta
- * no obligue a tocar cada componente. La rampa --lum-0..4 traduce los cinco niveles
- * de Luminosity del backend a color; el tamano y el halo los pone cada estrella,
- * porque el brillo no debe leerse solo por el tono (daltonismo).
+ * Tema: cartografia celeste. El vacio es profundo pero no negro plano (nebulosas
+ * violeta y cian dan atmosfera), las superficies son vidrio, y el oro se reserva
+ * a un unico lugar: las estrellas encendidas y las rachas vivas. Todo lo demas
+ * queda quieto para que ese brillo importe.
+ *
+ * La rampa --lum-0..4 traduce los cinco niveles de Luminosity del backend a color;
+ * el tamano y el halo los pone cada estrella, porque el brillo no debe leerse solo
+ * por el tono (daltonismo).
  */
 @theme {
-  --color-space: #070710;
-  --color-space-deep: #05050c;
-  --color-surface: #12121f;
-  --color-surface-raised: #1a1a2e;
-  --color-border: #262640;
+  --color-space: #05050f;
+  --color-space-deep: #030309;
+  --color-surface: rgb(21 21 40 / 0.62);
+  --color-surface-raised: rgb(28 28 52 / 0.85);
+  --color-border: rgb(139 125 255 / 0.16);
+  --color-border-strong: rgb(139 125 255 / 0.38);
 
-  --color-ink: #e9e9f4;
-  --color-muted: #9a9ab8;
-  --color-faint: #6b6b88;
+  --color-ink: #eceafd;
+  --color-muted: #a5a1cc;
+  --color-faint: #716d9a;
 
   --color-primary: #8b7dff;
-  --color-primary-strong: #a594ff;
+  --color-primary-strong: #b3a7ff;
+  --color-indigo-deep: #6d5ef0;
+  --color-violet-hot: #a45df0;
   --color-danger: #f4708a;
+
+  /* Oro estelar: solo estrellas cumplidas, rachas vivas y constelaciones. */
+  --color-gold: #ffd479;
+  --color-gold-soft: #fde68a;
 
   /* Rampa de brillo: nivel 0 (apagado) -> 4 (pleno). */
   --lum-0: #2a2a3d;
@@ -28,7 +41,8 @@
   --lum-3: #f59e0b;
   --lum-4: #fde68a;
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Onest Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Unbounded Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
 html,
@@ -38,15 +52,30 @@ body,
 }
 
 body {
+  /* Nebulosas fijas: violeta arriba, un rastro cian abajo para dar profundidad. */
   background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(139, 125, 255, 0.14), transparent 60%),
+    radial-gradient(70rem 45rem at 80% -15%, rgb(109 94 240 / 0.16), transparent 62%),
+    radial-gradient(55rem 40rem at -15% 108%, rgb(56 189 248 / 0.07), transparent 60%),
+    radial-gradient(45rem 32rem at 45% 45%, rgb(164 93 240 / 0.06), transparent 65%),
     var(--color-space);
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* Parpadeo suave para la estrella en pleno (nivel 4). */
+::selection {
+  background: rgb(139 125 255 / 0.35);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/* Parpadeo suave para estrellas encendidas. */
 @keyframes twinkle {
   0%,
   100% {
@@ -54,11 +83,57 @@ body {
     filter: brightness(1);
   }
   50% {
-    opacity: 0.85;
-    filter: brightness(1.25);
+    opacity: 0.82;
+    filter: brightness(1.3);
   }
 }
 
 .twinkle {
   animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Entrada de tarjetas y paneles: sube y aparece. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Ignicion: la estrella recien encendida estalla un instante. */
+@keyframes ignite {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ignite {
+  animation: ignite 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .twinkle,
+  .rise,
+  .ignite {
+    animation: none;
+  }
 }

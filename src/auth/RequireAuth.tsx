@@ -10,7 +10,7 @@ export function RequireAuth() {
     return (
       <div className="grid min-h-screen place-items-center">
         <Starfield />
-        <p className="text-muted animate-pulse">Encendiendo el cielo...</p>
+        <p className="font-display animate-pulse text-sm text-muted">Encendiendo el cielo...</p>
       </div>
     )
   }
