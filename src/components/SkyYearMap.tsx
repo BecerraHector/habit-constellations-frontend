@@ -9,8 +9,7 @@ const LUM = ['var(--lum-0)', 'var(--lum-1)', 'var(--lum-2)', 'var(--lum-3)', 'va
 const VOID = 'rgb(255 255 255 / 0.035)'
 
 const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
-// Filas impares sin etiqueta, como en cualquier carta celeste: orientan sin saturar.
-const WEEKDAYS = ['L', '', 'X', '', 'V', '', 'D']
+const WEEKDAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
 function iso(d: Date) {
   const m = String(d.getMonth() + 1).padStart(2, '0')
