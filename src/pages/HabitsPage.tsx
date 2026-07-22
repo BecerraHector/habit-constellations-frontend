@@ -2,7 +2,6 @@ import { useState, type FormEvent } from 'react'
 import { useCreateHabit, useHabits } from '@/api/habits'
 import { useSession } from '@/auth/session'
 import { HabitCard } from '@/components/HabitCard'
-import { Starfield } from '@/components/Starfield'
 import { Button, Card, Field } from '@/components/ui'
 
 // "lunes, 21 de julio" — el dia del usuario, que es quien corta a medianoche.
@@ -98,26 +97,19 @@ function DaySummary({ done, total }: { done: number; total: number }) {
 }
 
 export function HabitsPage() {
-  const { user, signOut } = useSession()
+  const { user } = useSession()
   const { data: habits, isLoading, isError } = useHabits()
 
   const doneToday = habits?.filter((h) => h.progress.completedToday).length ?? 0
 
   return (
-    <div className="min-h-screen">
-      <Starfield />
-
-      <header className="mx-auto flex max-w-2xl items-center justify-between px-4 pt-8 pb-6">
-        <div>
-          <h1 className="font-display text-2xl font-semibold text-ink">Tu cielo</h1>
-          <p className="mt-1 text-sm text-muted">
-            Hola, <span className="text-ink">{user?.displayName}</span>
-            <span className="text-faint"> · {TODAY}</span>
-          </p>
-        </div>
-        <Button variant="ghost" onClick={() => void signOut()}>
-          Salir
-        </Button>
+    <>
+      <header className="mx-auto max-w-2xl px-4 pt-6 pb-6">
+        <h1 className="font-display text-2xl font-semibold text-ink">Tu cielo</h1>
+        <p className="mt-1 text-sm text-muted">
+          Hola, <span className="text-ink">{user?.displayName}</span>
+          <span className="text-faint"> · {TODAY}</span>
+        </p>
       </header>
 
       <main className="mx-auto max-w-2xl space-y-4 px-4 pb-20">
@@ -146,6 +138,6 @@ export function HabitsPage() {
           <HabitCard key={habit.id} habit={habit} index={i + 1} />
         ))}
       </main>
-    </div>
+    </>
   )
 }

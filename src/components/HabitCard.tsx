@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
 import type { Habit } from '@/api/types'
 import { useArchiveHabit, useToggleCompletion } from '@/api/habits'
-import { Button, Card } from '@/components/ui'
+import { Button, Card, ConfirmButton } from '@/components/ui'
 
 const BAND_W = 320
 const BAND_H = 48
@@ -57,37 +56,6 @@ function ConstellationBand({ filled, pending }: { filled: number; pending: numbe
   )
 }
 
-/** Archivar sin dialogo modal: el boton pide confirmacion en el sitio y caduca solo. */
-function ArchiveButton({ name, onConfirm, busy }: { name: string; onConfirm: () => void; busy: boolean }) {
-  const [arming, setArming] = useState(false)
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current)
-  }, [])
-
-  function onClick() {
-    if (!arming) {
-      setArming(true)
-      timer.current = setTimeout(() => setArming(false), 3500)
-      return
-    }
-    if (timer.current) clearTimeout(timer.current)
-    onConfirm()
-  }
-
-  return (
-    <Button
-      variant={arming ? 'danger' : 'ghost'}
-      onClick={onClick}
-      busy={busy}
-      aria-label={arming ? `Confirmar archivado de ${name}` : `Archivar ${name}`}
-    >
-      {arming ? 'Confirmar' : 'Archivar'}
-    </Button>
-  )
-}
-
 export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }) {
   const toggle = useToggleCompletion()
   const archive = useArchiveHabit()
@@ -136,11 +104,13 @@ export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }
           pending={progress.daysToNextConstellation}
         />
         <div className="ml-auto flex items-center gap-2">
-          <ArchiveButton
-            name={habit.name}
+          <ConfirmButton
+            aria-label={`Archivar ${habit.name}`}
             onConfirm={() => archive.mutate(habit.id)}
             busy={archive.isPending}
-          />
+          >
+            Archivar
+          </ConfirmButton>
           <Button
             variant={done ? 'ghost' : 'primary'}
             onClick={() => toggle.mutate({ id: habit.id, done: !done })}

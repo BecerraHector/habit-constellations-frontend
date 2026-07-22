@@ -35,3 +35,68 @@ export interface Habit {
   archived: boolean
   progress: Progress
 }
+
+export interface Galaxy {
+  id: string
+  name: string
+  description: string | null
+  theme: string
+  creatorId: string
+  createdAt: string
+  activeMembers: number
+  member: boolean
+  joinedOn: string | null
+  habitId: string | null
+}
+
+/** Una estrella del mapa: nivel 0..4 mas las cifras crudas que lo explican. */
+export interface GalaxyDay {
+  date: string
+  activeMembers: number
+  completions: number
+  level: number
+}
+
+export interface GalaxyMap {
+  from: string
+  to: string
+  maxLevel: number
+  perfectDays: number
+  totalStars: number
+  averageRatio: number
+  days: GalaxyDay[]
+}
+
+export interface GalaxyDetail {
+  galaxy: Galaxy
+  map: GalaxyMap
+}
+
+export interface GalaxyDayDetail {
+  date: string
+  activeMembers: number
+  completions: number
+  level: number
+  completedBy: string[]
+}
+
+export interface GalaxyMember {
+  userId: string
+  displayName: string
+  joinedOn: string
+}
+
+export interface ThemeCount {
+  theme: string
+  galaxies: number
+  members: number
+}
+
+export interface PageResponse<T> {
+  content: T[]
+  page: number
+  size: number
+  totalElements: number
+  totalPages: number
+  hasNext: boolean
+}

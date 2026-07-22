@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, CSSProperties, InputHTMLAttributes, ReactNode } from 'react'
-import { useId } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'ghost' | 'danger'
@@ -89,6 +89,47 @@ export function ErrorText({ children }: { children: ReactNode }) {
     <p role="alert" className="rounded-lg border border-danger/25 bg-danger/10 px-3 py-2 text-sm text-danger">
       {children}
     </p>
+  )
+}
+
+/**
+ * Accion destructiva sin dialogo modal: el primer click arma el boton (pasa a
+ * "Confirmar" en tinte de peligro) y el segundo ejecuta. Se desarma solo.
+ */
+export function ConfirmButton({
+  children,
+  confirmLabel = 'Confirmar',
+  onConfirm,
+  busy = false,
+  className = '',
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  confirmLabel?: string
+  onConfirm: () => void
+  busy?: boolean
+}) {
+  const [arming, setArming] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current)
+  }, [])
+
+  function onClick() {
+    if (!arming) {
+      setArming(true)
+      timer.current = setTimeout(() => setArming(false), 3500)
+      return
+    }
+    if (timer.current) clearTimeout(timer.current)
+    setArming(false)
+    onConfirm()
+  }
+
+  return (
+    <Button variant={arming ? 'danger' : 'ghost'} onClick={onClick} busy={busy} className={className} {...props}>
+      {arming ? confirmLabel : children}
+    </Button>
   )
 }
 
