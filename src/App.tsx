@@ -4,6 +4,7 @@ import { AppLayout } from '@/components/AppLayout'
 import { LoginPage } from '@/pages/LoginPage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { HabitsPage } from '@/pages/HabitsPage'
+import { HabitDetailPage } from '@/pages/HabitDetailPage'
 import { GalaxiesPage } from '@/pages/GalaxiesPage'
 import { GalaxyDetailPage } from '@/pages/GalaxyDetailPage'
 import { FriendsPage } from '@/pages/FriendsPage'
@@ -17,6 +18,7 @@ export default function App() {
       <Route element={<RequireAuth />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<HabitsPage />} />
+          <Route path="/habitos/:id" element={<HabitDetailPage />} />
           <Route path="/galaxias" element={<GalaxiesPage />} />
           <Route path="/galaxias/:id" element={<GalaxyDetailPage />} />
           <Route path="/amigos" element={<FriendsPage />} />

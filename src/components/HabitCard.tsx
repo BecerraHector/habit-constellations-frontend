@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { Habit } from '@/api/types'
 import { useArchiveHabit, useToggleCompletion } from '@/api/habits'
 import { Button, Card, ConfirmButton } from '@/components/ui'
@@ -131,7 +132,15 @@ export function HabitCard({ habit, index = 0 }: { habit: Habit; index?: number }
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h3 className="truncate text-lg font-semibold text-ink">{habit.name}</h3>
+          <h3 className="truncate text-lg font-semibold">
+            {/* El titulo lleva al detalle: historia en calendario, edicion y repaso de ayer. */}
+            <Link
+              to={`/habitos/${habit.id}`}
+              className="rounded text-ink outline-none transition-colors hover:text-primary-strong focus-visible:ring-2 focus-visible:ring-primary/70"
+            >
+              {habit.name}
+            </Link>
+          </h3>
           {habit.description && (
             <p className="mt-0.5 truncate text-sm text-muted">{habit.description}</p>
           )}

@@ -36,6 +36,13 @@ export interface Habit {
   progress: Progress
 }
 
+/** La ventana efectiva viaja en la respuesta: el backend pudo recortar la pedida. */
+export interface HabitHistory {
+  from: string
+  to: string
+  dates: string[]
+}
+
 export interface Galaxy {
   id: string
   name: string
