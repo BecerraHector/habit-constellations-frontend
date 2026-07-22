@@ -21,8 +21,13 @@ export function LoginPage() {
       await signIn(email, password)
       navigate('/', { replace: true })
     } catch (err) {
-      // El backend no distingue email inexistente de clave mala, a proposito.
-      setError(err instanceof ApiError ? 'Email o contrasena incorrectos' : 'No se pudo conectar')
+      if (err instanceof ApiError) {
+        // 429: el freno de fuerza bruta; su mensaje si aporta. El resto se aplana a
+        // proposito: el backend no distingue email inexistente de clave mala.
+        setError(err.status === 429 ? err.message : 'Email o contrasena incorrectos')
+      } else {
+        setError('No se pudo conectar')
+      }
     } finally {
       setBusy(false)
     }
