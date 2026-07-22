@@ -39,15 +39,18 @@ export function LoginPage() {
           <Field
             label="Email"
             type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            spellCheck={false}
             placeholder="tu@correo.com"
             required
           />
           <Field
             label="Contrasena"
             type="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"

@@ -45,10 +45,24 @@
   --font-display: 'Unbounded Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
+html {
+  /* Los controles nativos (scrollbars, selects, inputs) se pintan oscuros. */
+  color-scheme: dark;
+}
+
 html,
 body,
 #root {
   height: 100%;
+}
+
+button,
+a,
+select,
+input {
+  /* Sin retardo de doble tap en tactil, y sin flash gris de WebKit al tocar. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {

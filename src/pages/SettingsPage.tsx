@@ -121,6 +121,7 @@ function DangerCard() {
           <Field
             label="Confirma tu contrasena"
             type="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"

@@ -26,7 +26,7 @@ export function AppLayout() {
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
-                `rounded-full px-4 py-1.5 text-sm transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
+                `rounded-full px-4 py-1.5 text-sm transition duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
                   isActive
                     ? 'bg-[linear-gradient(135deg,var(--color-indigo-deep),var(--color-violet-hot))] font-medium text-white shadow-[0_2px_16px_-4px_rgb(139_125_255/0.6)]'
                     : 'text-muted hover:text-ink'

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import type { Galaxy } from '@/api/types'
 import { useHabits } from '@/api/habits'
 import {
@@ -37,10 +37,12 @@ function HabitPicker({
       <span className="mb-1.5 block text-xs font-medium tracking-[0.12em] text-muted uppercase">
         Habito que lo sostiene
       </span>
+      {/* Fondo solido a proposito: un select nativo con fondo translucido pinta el
+          desplegable blanco en el modo oscuro de Windows. */}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none rounded-xl border border-border bg-space-deep/60 px-3.5 py-2.5 text-ink transition-all duration-200 outline-none hover:border-border-strong focus:border-primary/70 focus:shadow-[0_0_0_3px_rgb(139_125_255/0.15)]"
+        className="w-full appearance-none rounded-xl border border-border bg-[#0a0a18] px-3.5 py-2.5 text-ink transition duration-200 outline-none hover:border-border-strong focus:border-primary/70 focus:shadow-[0_0_0_3px_rgb(139_125_255/0.15)]"
       >
         <option value="">{newLabel}</option>
         {active.map((h) => (
@@ -152,7 +154,7 @@ function NewGalaxyForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-2xl border border-dashed border-border py-3.5 text-sm text-muted transition-all duration-200 outline-none hover:border-border-strong hover:bg-white/[0.03] hover:text-ink focus-visible:ring-2 focus-visible:ring-primary/70"
+        className="w-full rounded-2xl border border-dashed border-border py-3.5 text-sm text-muted transition duration-200 outline-none hover:border-border-strong hover:bg-white/[0.03] hover:text-ink focus-visible:ring-2 focus-visible:ring-primary/70"
       >
         + Forjar una galaxia nueva
       </button>
@@ -164,8 +166,10 @@ function NewGalaxyForm() {
       <form onSubmit={onSubmit} className="space-y-4">
         <Field
           label="Nombre"
+          name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          autoComplete="off"
           maxLength={80}
           placeholder="Madrugadores"
           autoFocus
@@ -173,9 +177,12 @@ function NewGalaxyForm() {
         />
         <Field
           label="Tema"
-          hint="una palabra: deporte, lectura..."
+          hint="una palabra: deporte, lectura…"
+          name="theme"
           value={theme}
           onChange={(e) => setTheme(e.target.value)}
+          autoComplete="off"
+          spellCheck={false}
           maxLength={32}
           placeholder="deporte"
           required
@@ -183,8 +190,10 @@ function NewGalaxyForm() {
         <Field
           label="Descripcion"
           hint="opcional"
+          name="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          autoComplete="off"
           maxLength={280}
           placeholder="Levantarse antes de las 7"
         />
@@ -203,7 +212,11 @@ function NewGalaxyForm() {
 }
 
 export function GalaxiesPage() {
-  const [theme, setTheme] = useState<string | null>(null)
+  // El filtro vive en la URL: un enlace a /galaxias?tema=lectura llega filtrado.
+  const [params, setParams] = useSearchParams()
+  const theme = params.get('tema')
+  const setTheme = (t: string | null) =>
+    setParams(t ? { tema: t } : {}, { replace: true })
   const mine = useMyGalaxies()
   const catalog = useCatalog()
   const discover = useDiscover(theme)
@@ -222,7 +235,7 @@ export function GalaxiesPage() {
 
       <main className="mx-auto max-w-2xl space-y-8 px-4 pb-20">
         <section className="space-y-4">
-          {mine.isLoading && <p className="animate-pulse text-center text-muted">Buscando tus galaxias...</p>}
+          {mine.isLoading && <p className="animate-pulse text-center text-muted">Buscando tus galaxias…</p>}
           {mine.data && mine.data.length > 0 && (
             <>
               <h2 className="text-xs font-medium tracking-[0.14em] text-faint uppercase">Tus galaxias</h2>
@@ -241,7 +254,7 @@ export function GalaxiesPage() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setTheme(null)}
-                className={`rounded-full border px-3 py-1 text-xs transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
+                className={`rounded-full border px-3 py-1 text-xs transition duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
                   theme === null
                     ? 'border-primary/60 bg-primary/15 text-primary-strong'
                     : 'border-border text-muted hover:border-border-strong hover:text-ink'
@@ -253,7 +266,7 @@ export function GalaxiesPage() {
                 <button
                   key={t.theme}
                   onClick={() => setTheme(t.theme)}
-                  className={`rounded-full border px-3 py-1 text-xs transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
+                  className={`rounded-full border px-3 py-1 text-xs transition duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 ${
                     theme === t.theme
                       ? 'border-primary/60 bg-primary/15 text-primary-strong'
                       : 'border-border text-muted hover:border-border-strong hover:text-ink'
@@ -265,7 +278,7 @@ export function GalaxiesPage() {
             </div>
           )}
 
-          {discover.isLoading && <p className="animate-pulse text-center text-muted">Explorando el cielo...</p>}
+          {discover.isLoading && <p className="animate-pulse text-center text-muted">Explorando el cielo…</p>}
           {discover.data && discovered.length === 0 && (
             <Card className="px-6 py-8 text-center text-sm text-muted">
               Nada nuevo que descubrir por aqui{theme ? ` en «${theme}»` : ''}. Forja tu la primera.

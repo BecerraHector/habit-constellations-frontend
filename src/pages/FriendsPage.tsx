@@ -86,8 +86,11 @@ function InviteCard() {
           <Field
             label="Anadir amigo"
             hint="su codigo"
+            name="inviteCode"
             value={code}
             onChange={(e) => setCode(e.target.value)}
+            autoComplete="off"
+            spellCheck={false}
             maxLength={16}
             placeholder="ABCD-1234"
           />
@@ -98,7 +101,9 @@ function InviteCard() {
       </form>
       {feedback &&
         (feedback.ok ? (
-          <p className="mt-3 text-sm text-gold-soft">{feedback.text}</p>
+          <p role="status" className="mt-3 text-sm text-gold-soft">
+            {feedback.text}
+          </p>
         ) : (
           <div className="mt-3">
             <ErrorText>{feedback.text}</ErrorText>
@@ -234,7 +239,7 @@ export function FriendsPage() {
 
         <section className="space-y-4">
           {friends.isLoading && (
-            <p className="animate-pulse text-center text-muted">Buscando cielos vecinos...</p>
+            <p className="animate-pulse text-center text-muted">Buscando cielos vecinos…</p>
           )}
           {friends.data && friends.data.content.length === 0 && (
             <Card className="px-8 py-10 text-center text-sm text-muted">

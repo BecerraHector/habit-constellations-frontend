@@ -28,7 +28,7 @@ function DayStar({ day, selected, onSelect }: { day: GalaxyDay; selected: boolea
       onClick={onSelect}
       aria-label={`${longDate(day.date)}: ${day.completions} de ${day.activeMembers}`}
       aria-pressed={selected}
-      className={`flex flex-col items-center gap-1 rounded-xl py-2 transition-all duration-200 outline-none hover:bg-white/[0.05] focus-visible:ring-2 focus-visible:ring-primary/70 ${
+      className={`flex flex-col items-center gap-1 rounded-xl py-2 transition duration-200 outline-none hover:bg-white/[0.05] focus-visible:ring-2 focus-visible:ring-primary/70 ${
         selected ? 'bg-white/[0.07]' : ''
       }`}
     >
@@ -53,7 +53,7 @@ function DayStar({ day, selected, onSelect }: { day: GalaxyDay; selected: boolea
 function DayBreakdown({ galaxyId, date }: { galaxyId: string; date: string }) {
   const { data, isLoading } = useGalaxyDay(galaxyId, date)
 
-  if (isLoading) return <p className="animate-pulse py-2 text-sm text-muted">Mirando ese dia...</p>
+  if (isLoading) return <p className="animate-pulse py-2 text-sm text-muted">Mirando ese dia…</p>
   if (!data) return null
 
   const full = data.activeMembers > 0 && data.completions === data.activeMembers
@@ -102,7 +102,7 @@ export function GalaxyDetailPage() {
   const [selected, setSelected] = useState<string | null>(null)
 
   if (detail.isLoading) {
-    return <p className="animate-pulse py-16 text-center text-muted">Enfocando la galaxia...</p>
+    return <p className="animate-pulse py-16 text-center text-muted">Enfocando la galaxia…</p>
   }
   if (detail.isError || !detail.data) {
     return (
@@ -178,7 +178,7 @@ export function GalaxyDetailPage() {
 
         <Card className="rise p-5 sm:p-6" style={{ animationDelay: '80ms' }}>
           <h2 className="text-xs font-medium tracking-[0.14em] text-faint uppercase">Habitantes</h2>
-          {members.isLoading && <p className="mt-3 animate-pulse text-sm text-muted">Contando estrellas...</p>}
+          {members.isLoading && <p className="mt-3 animate-pulse text-sm text-muted">Contando estrellas…</p>}
           {members.data && (
             <>
               <ul className="mt-3 flex flex-wrap gap-2">

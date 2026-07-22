@@ -23,7 +23,7 @@ export function Button({ variant = 'primary', busy = false, className = '', chil
 
   return (
     <button
-      className={`relative inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-space disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100 ${styles} ${className}`}
+      className={`relative inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm transition duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-space disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100 ${styles} ${className}`}
       disabled={disabled || busy}
       {...props}
     >
@@ -50,7 +50,7 @@ export function Field({ label, hint, className = '', ...props }: FieldProps) {
       </span>
       <input
         id={id}
-        className={`w-full rounded-xl border border-border bg-space-deep/60 px-3.5 py-2.5 text-ink transition-all duration-200 outline-none placeholder:text-faint hover:border-border-strong focus:border-primary/70 focus:bg-space-deep/80 focus:shadow-[0_0_0_3px_rgb(139_125_255/0.15),0_0_24px_-8px_rgb(139_125_255/0.5)] ${className}`}
+        className={`w-full rounded-xl border border-border bg-space-deep/60 px-3.5 py-2.5 text-ink transition duration-200 outline-none placeholder:text-faint hover:border-border-strong focus:border-primary/70 focus:bg-space-deep/80 focus:shadow-[0_0_0_3px_rgb(139_125_255/0.15),0_0_24px_-8px_rgb(139_125_255/0.5)] ${className}`}
         {...props}
       />
     </label>

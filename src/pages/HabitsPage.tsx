@@ -4,8 +4,17 @@ import { useSession } from '@/auth/session'
 import { HabitCard } from '@/components/HabitCard'
 import { Button, Card, Field } from '@/components/ui'
 
-// "lunes, 21 de julio" — el dia del usuario, que es quien corta a medianoche.
-const TODAY = new Date().toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' })
+// "lunes, 21 de julio" — el dia del usuario, que corta a SU medianoche. Sin el
+// timeZone, un navegador en otra zona mostraria una fecha que el backend aun no
+// (o ya no) considera "hoy".
+function todayFor(zoneId: string | undefined) {
+  return new Date().toLocaleDateString('es', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: zoneId,
+  })
+}
 
 function NewHabitForm() {
   const create = useCreateHabit()
@@ -26,7 +35,7 @@ function NewHabitForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-2xl border border-dashed border-border py-3.5 text-sm text-muted transition-all duration-200 outline-none hover:border-border-strong hover:bg-white/[0.03] hover:text-ink focus-visible:ring-2 focus-visible:ring-primary/70"
+        className="w-full rounded-2xl border border-dashed border-border py-3.5 text-sm text-muted transition duration-200 outline-none hover:border-border-strong hover:bg-white/[0.03] hover:text-ink focus-visible:ring-2 focus-visible:ring-primary/70"
       >
         + Nueva estrella que encender
       </button>
@@ -38,8 +47,10 @@ function NewHabitForm() {
       <form onSubmit={onSubmit} className="space-y-4">
         <Field
           label="Nombre"
+          name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          autoComplete="off"
           maxLength={80}
           placeholder="Ir al gimnasio"
           autoFocus
@@ -48,8 +59,10 @@ function NewHabitForm() {
         <Field
           label="Descripcion"
           hint="opcional"
+          name="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          autoComplete="off"
           maxLength={280}
           placeholder="30 minutos bastan"
         />
@@ -83,7 +96,7 @@ function DaySummary({ done, total }: { done: number; total: number }) {
         </p>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
           <div
-            className={`h-full rounded-full transition-all duration-700 ease-out ${
+            className={`h-full rounded-full transition-[width] duration-700 ease-out ${
               complete
                 ? 'bg-[linear-gradient(90deg,var(--color-gold),var(--color-gold-soft))]'
                 : 'bg-[linear-gradient(90deg,var(--color-indigo-deep),var(--color-violet-hot))]'
@@ -108,7 +121,7 @@ export function HabitsPage() {
         <h1 className="font-display text-2xl font-semibold text-ink">Tu cielo</h1>
         <p className="mt-1 text-sm text-muted">
           Hola, <span className="text-ink">{user?.displayName}</span>
-          <span className="text-faint"> · {TODAY}</span>
+          <span className="text-faint"> · {todayFor(user?.zoneId)}</span>
         </p>
       </header>
 
@@ -118,7 +131,7 @@ export function HabitsPage() {
         <NewHabitForm />
 
         {isLoading && (
-          <p className="animate-pulse py-8 text-center text-muted">Encendiendo el cielo...</p>
+          <p className="animate-pulse py-8 text-center text-muted">Encendiendo el cielo…</p>
         )}
         {isError && (
           <Card className="p-5 text-center text-danger">No se pudieron cargar tus habitos.</Card>

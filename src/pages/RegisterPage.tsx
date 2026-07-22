@@ -42,8 +42,10 @@ export function RegisterPage() {
         <form onSubmit={onSubmit} className="mt-8 space-y-4">
           <Field
             label="Nombre visible"
+            name="displayName"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
+            autoComplete="nickname"
             maxLength={60}
             placeholder="Como te veran tus amigos"
             required
@@ -51,9 +53,11 @@ export function RegisterPage() {
           <Field
             label="Email"
             type="email"
+            name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            spellCheck={false}
             placeholder="tu@correo.com"
             required
           />
@@ -61,6 +65,7 @@ export function RegisterPage() {
             label="Contrasena"
             hint="minimo 10 caracteres"
             type="password"
+            name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="new-password"
